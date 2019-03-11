@@ -12,4 +12,4 @@ matrix:
           before_script:
               - npm install -g jscs
           script:
-              - jscs src
+              - jscs -c "./webserver/.jscsrc" webserver/src
