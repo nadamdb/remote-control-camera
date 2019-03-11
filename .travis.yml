@@ -1,5 +1,15 @@
-language: python
-python:
- - "3.6"
-script:
- - pytest
+matrix:
+    include:
+        - language: python
+          python:
+              - "3.6"
+          script:
+              - pytest
+
+        - language: node_js
+          node_js:
+              - "node"
+          before_script:
+              - npm install -g jscs
+          script:
+              - jscs src
