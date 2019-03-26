@@ -34,7 +34,10 @@ describe("Test upload", () => {
                     if (err) throw err;
                   
                     for (const file of files) {
-                      fs.unlinkSync(path.join(directory, file));
+                      if (file != '.keep'){
+                        fs.unlinkSync(path.join(directory, file));
+                      }
+                      
                     }
                     
                     db.run('DELETE FROM movements',[],function(err){
