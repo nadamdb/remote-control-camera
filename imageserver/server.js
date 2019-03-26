@@ -82,3 +82,5 @@ app.get("/movements", function(req, res){
     res.send(response);
     });
 });
+
+module.exports=app;
