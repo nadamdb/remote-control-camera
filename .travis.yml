@@ -19,5 +19,6 @@ matrix:
               - "node"
           before_script:
               - cd imageserver
+              - npm i
           script:
               - npm test
