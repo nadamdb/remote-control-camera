@@ -137,4 +137,39 @@ else {
 });
 }
 
+
+// Toggle camera on / off
+app.post("/camera", function(req, res){
+  // Toggle camera
+  console.log('[Image Server]['+timestamp.utc('YYYY-MM-DD_HH-mm-ss')+'] Camera turned ON / OFF');
+  if(toggle_camera() === "ok"){
+    res.status(200).send();
+  } else {
+    res.status(503).send();
+  }
+});
+
+// GET camera status
+app.get("/camera", function(req, res){
+  let status = getrandom();
+  if(status == 1){
+    res.send("ON");
+  }else {
+    res.send("OFF");
+  }
+  
+});
+
+// Ez fogja meghívni a kamera kezelőt
+function toggle_camera(){
+  return "ok";
+}
+
+// Változzon a lekért adat azért, könnyebb legyen fejleszteni frontendet.
+function getrandom(){
+  let rnd_time = timestamp.utc('ss');
+  let rnd = rnd_time % 2;
+  return rnd;
+}
+
 module.exports=app;
