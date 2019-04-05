@@ -10,14 +10,6 @@ matrix:
           node_js:
               - "node"
           before_script:
-              - npm install -g jscs
-          script:
-              - jscs -c "./webserver/.jscsrc" webserver/src
-
-        - language: node_js
-          node_js:
-              - "node"
-          before_script:
               - cd imageserver
               - npm i
           script:
