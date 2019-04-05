@@ -1,4 +1,5 @@
-.vagrant 
+vagrant/.vagrant
+vagrant/ubuntu-xenial-16.04-cloudimg-console.log
 ../*.log 
 node_modules
 **/uploads/*.png
