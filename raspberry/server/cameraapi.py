@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+﻿from flask import Flask, jsonify
 app = Flask(__name__)
 # a fajlba  iras olvasás csak szimuláció
 @app.route("/status", methods=['GET'])
@@ -31,6 +31,10 @@ def cameraon():
 @app.route("/off", methods=['GET'])
 def cameraoff(): 
     turnoffcamera()
+    return jsonify(getCameraStatus())
+
+@app.route("/status", methods=['GET'])
+def cameraoff(): 
     return jsonify(getCameraStatus())
 
 def turnoncamera():
