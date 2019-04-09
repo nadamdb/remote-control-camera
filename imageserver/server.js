@@ -34,15 +34,20 @@ app.use(express.static('public'));
 
 // /upload site to post images (ex.: curl -X POST http://csontho.info:3000/upload -F sampleFile=@image.png )
 app.post('/upload', function(req, res) {
+  if(req.files != null){
+  
   if (Object.keys(req.files).length == 0) {
     if(legacyHTMLformat) {
       var status_400_response = "<html><head><title>Upload failed!</title></head><body> Upload failed."+' <a href="'+URL_this_running_on+'index.html">Take me back to the upload form</a> / <a href="'+URL_this_running_on+'/movements"> Visit /movements site</a>'
       return res.status(400).send(status_400_response);
     } else {
-      return res.status(400).send(400);
+      return res.status(400).send();
     }
   }
-
+}else {
+  //console.log("No file uploaded");
+  return res.status(400).send();
+}
   // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
   let sampleFile = req.files.sampleFile;
   let filename = sampleFile.name;
