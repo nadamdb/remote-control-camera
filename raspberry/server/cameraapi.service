@@ -5,9 +5,9 @@ After=network.target
 [Service]
 User=root
 Group=www-data
-WorkingDirectory=/home/vagrant/server
-Environment="PATH=/home/vagrant/server/cameraapiserver/bin"
-ExecStart=/home/vagrant/server/cameraapiserver/bin/uwsgi --ini cameraapi.ini
+WorkingDirectory=/raspberry/server
+Environment="PATH=/raspberry/server/cameraapiserver/bin"
+ExecStart=/raspberry/server/cameraapiserver/bin/uwsgi --ini cameraapi.ini
 
 [Install]
 WantedBy=multi-user.target
