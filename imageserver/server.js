@@ -30,7 +30,7 @@ httpServer.listen(PORT, () => {
 app.use(fileUpload());
 
 // Serving static files, like uploaded images
-app.use(express.static(__dirname + 'public'));
+app.use(express.static('public'));
 app.use(express.static(__dirname + '/../website/'));
 
 // /upload site to post images (ex.: curl -X POST http://csontho.info:3000/upload -F sampleFile=@image.png )
