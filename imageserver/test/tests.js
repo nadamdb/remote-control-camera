@@ -131,7 +131,7 @@ describe("Test /movements route", () => {
                 chai.expect(res.movements).not.undefined;
                 chai.expect(res.movements.length).to.be.equal(1);
                 var movement = res.movements[0];
-                chai.expect(movement).to.be.equal({timestamp:'2019-03-27_09-56-11', url:'/uploads/test', path:'/justanurl'})
+                chai.expect(movement).to.deep.equal({timestamp:'2019-03-27_09-56-11', url:'/uploads/test', path:'/justanurl'})
                 done();   
             });
         })
