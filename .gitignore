@@ -7,3 +7,5 @@ node_modules
 **.idea
 **.vscode
 raspberry/server/__pycache__
+raspberry/tests/__pycache__
+raspberry/.pytest_cache

@@ -29,13 +29,13 @@ def cameraon():
 
 
 @app.route("/off", methods=['GET'])
-def cameraoff(): 
+def cameraoff():
     turnoffcamera()
     return jsonify(getCameraStatus())
 
-@app.route("/status", methods=['GET'])
-def cameraoff(): 
-    return jsonify(getCameraStatus())
+#@app.route("/status", methods=['GET'])
+#def cameraoff():
+#    return jsonify(getCameraStatus())
 
 def turnoncamera():
     try:
@@ -44,7 +44,7 @@ def turnoncamera():
         f.close()
     except Exception as e:
         print("An exception occurred: " + str(e))
-    
+
 def turnoffcamera():
     try:
         f = open("camerastatus", "w")
@@ -53,7 +53,6 @@ def turnoffcamera():
     except Exception as e:
         print("An exception occurred: " + str(e))
 
-        
 if __name__ == '__main__':
     abspath = os.path.abspath(__file__)
     dname = os.path.dirname(abspath)
