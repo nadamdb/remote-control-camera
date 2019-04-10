@@ -9,3 +9,11 @@
     }
   
   })();
+
+(function () {
+    var tb = document.getElementById('textbox');
+    var but = document.getElementById('go');
+    but.addEventListener('click', function(e) {
+        document.getElementById('video').src = tb.value;
+    });
+})();
