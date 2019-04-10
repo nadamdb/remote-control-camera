@@ -24,6 +24,7 @@ Vagrant.configure("2") do |config|
       trigger.run_remote  = {inline: <<-SHELL
           echo "Attempting to start nodejs"
           cd /imageserver
+          npm install
           node server.js&
           echo "Started nodejs"
         SHELL
