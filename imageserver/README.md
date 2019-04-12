@@ -1,10 +1,11 @@
+
 # Agilis projekt - Imageserver
 
 Simple nodeJS webserver, with post form in index.html, and list in /movements.
 Application running on PORT 3000.
 
-&& TODO:
-- Forward motion detected to ??
+## TODO:
+- Forward "motion detected" to ??
 - Python server communication
 ## Used:
 
