@@ -13,6 +13,7 @@ Application running on PORT 3000.
 -time-stamp
 -sqlite3
 -axios (!!!! NEW !!!! FOR async http)
+-body-parser (!!!! NEW !!!!)
 
 ## npm
 

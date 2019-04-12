@@ -5,15 +5,16 @@ const timestamp = require('time-stamp');
 const express = require("express");
 const fileUpload = require('express-fileupload');
 const axios = require('axios');
+const bodyParser = require("body-parser");
 var sqlite3 = require('sqlite3').verbose();
 
 const app = express();
 const httpServer = http.createServer(app);
 const PORT = process.env.PORT || 3000;
 var db = new sqlite3.Database('./movements.db');
-var python_server_ip = "localhost";
-var python_server_port = 3000;
-axios.defaults.port = 3000;
+var python_server_ip = "192.168.66.2";
+var python_server_port = 5000;
+axios.defaults.port = python_server_port;
 // Important! Where to move the uploaded file on the server. 
 let path = 'public/uploads/';
 
@@ -36,7 +37,8 @@ app.use(fileUpload());
 app.use(express.static('public'));
 app.use(express.static(__dirname + '/../website/'));
 
-
+// Bodyparser
+app.use(bodyParser.json());
 
 
 // /upload site to post images (ex.: curl -X POST http://csontho.info:3000/upload -F sampleFile=@image.png )
@@ -172,23 +174,25 @@ app.put("/motion", function(req, res){
 app.post("/camera", function (req, res) {
   // Toggle camera
   console.log(req.body)
-  console.log('[Image Server][' + timestamp.utc('YYYY-MM-DD_HH-mm-ss') + '] Camera turned ON / OFF');
-  if (toggle_camera() === "ok") {
-    res.status(200).send();
-  } else {
-    res.status(503).send();
+  var command = req.body.value
+  if(command == "on" || command == "off"){
+    console.log('[Image Server][' + timestamp.utc('YYYY-MM-DD_HH-mm-ss') + '] Camera turned '+req.body.value);
+    postMethod(command)
+    res.status(200).send()
+  }else {
+    console.log('[Image Server][' + timestamp.utc('YYYY-MM-DD_HH-mm-ss') + '] wrong request');
+    res.status(400).send();
   }
 
-  // SEND TO PYTHON POST
 });
 
 
 // GET camera status
 app.get("/camera", function (req, res) {
   var camera_status = getMethod("/status")
-  if (camera_status == "ON") {
+  if (camera_status.status == "on") {
     res.send("ON");
-  } else if(camera_status == "OFF"){
+  } else if(camera_status.status == "off"){
     res.send("OFF");
   }
   else {
@@ -227,5 +231,27 @@ function getMethod(url){
   .then(function () {
     // always executed
   });  
+}
+app.post('/test', function(req,res){
+  res.status(200).send("ok");
+  console.log("/test: "+req.data)
+});
+
+function postMethod(command){
+  console.log("Axiospost command:"+command)
+  axios({
+    method: 'post',
+    url: "http://"+python_server_ip+":"+python_server_port+"/camera",
+    data: {
+      value: command
+    }
+  })
+.then((res) => {
+  console.log(`statusCode: ${res.statusCode}`)
+  //console.log(res)
+})
+.catch((error) => {
+  console.error(error)
+})
 }
 module.exports = app;
