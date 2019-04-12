@@ -1,4 +1,4 @@
-﻿from flask import Flask, jsonify
+﻿from flask import Flask, jsonify, request, abort, json
 app = Flask(__name__)
 # a fajlba  iras olvasás csak szimuláció
 @app.route("/status", methods=['GET'])
@@ -22,20 +22,21 @@ def getCameraStatus():
     finally:
         return status
 
-@app.route("/on", methods=['GET'])
-def cameraon():
-    turnoncamera()
+@app.route("/camera", methods=['POST'])
+def cameraonoff():
+    operation= request.get_json()
+    print(operation)
+    if operation["value"] == "off":
+        turnoffcamera()
+    elif operation["value"] == "on":
+        turnoncamera()
+    else:
+        print("invalid operation")
+        message = {}
+        message["errormessage"] = "operation %s not valid" % operation["value"]
+        return app.response_class(response=json.dumps(message), status=400, mimetype='application/json')
     return jsonify(getCameraStatus())
 
-
-@app.route("/off", methods=['GET'])
-def cameraoff():
-    turnoffcamera()
-    return jsonify(getCameraStatus())
-
-#@app.route("/status", methods=['GET'])
-#def cameraoff():
-#    return jsonify(getCameraStatus())
 
 def turnoncamera():
     try:

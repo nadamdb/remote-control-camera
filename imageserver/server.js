@@ -12,7 +12,7 @@ const app = express();
 const httpServer = http.createServer(app);
 const PORT = process.env.PORT || 3000;
 var db = new sqlite3.Database('./movements.db');
-var python_server_ip = "192.168.66.2";
+var python_server_ip = "192.168.66.3";
 var python_server_port = 5000;
 axios.defaults.port = python_server_port;
 // Important! Where to move the uploaded file on the server. 
@@ -172,7 +172,7 @@ app.put("/motion", function(req, res){
 
 // Toggle camera on / off
 app.post("/camera", function (req, res) {
-  // Toggle camera
+  // Toggle camere
   console.log(req.body)
   var command = req.body.value
   if(command == "on" || command == "off"){
@@ -189,15 +189,22 @@ app.post("/camera", function (req, res) {
 
 // GET camera status
 app.get("/camera", function (req, res) {
-  var camera_status = getMethod("/status")
-  if (camera_status.status == "on") {
-    res.send("ON");
-  } else if(camera_status.status == "off"){
-    res.send("OFF");
-  }
-  else {
-    res.send("unknown");
-  }
+   getMethod("/status").then(function(result){
+    var camera_status = result.data;
+    if (camera_status.status == "on") {
+      res.send("ON");
+    } else if(camera_status.status == "off"){
+      res.send("OFF");
+    }
+    else {
+      res.send("unknown");
+    }
+  }).catch(function (error) {
+    // handle error
+    console.log(error);
+    return "400"
+  }) 
+ 
 
 });
 
@@ -215,22 +222,10 @@ function getrandom() {
 
 function getMethod(url){
 
-  axios({
+  return axios({
     method: 'get',
     url: "http://"+python_server_ip+":"+python_server_port+url
   })
-  .then(function (response) {
-    // handle success
-    return response.data;
-  })
-  .catch(function (error) {
-    // handle error
-    console.log(error);
-    return "400"
-  })
-  .then(function () {
-    // always executed
-  });  
 }
 app.post('/test', function(req,res){
   res.status(200).send("ok");
@@ -247,8 +242,8 @@ function postMethod(command){
     }
   })
 .then((res) => {
-  console.log(`statusCode: ${res.statusCode}`)
-  //console.log(res)
+  console.log(`statusCode: ${res.status}`)
+  console.log(res.data)
 })
 .catch((error) => {
   console.error(error)
