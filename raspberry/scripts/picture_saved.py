@@ -1,12 +1,15 @@
-import socket
-UDP_IP = "192.168.1.105"
-UDP_PORT = 10000
-def senddata(message='{"endPoint":"camera_device_raspi", "messageType":"measurement", "address":"192.168.1.125", "model":"3302","resource":"5500", "instanceNumber":"0", "value":"false"}'):
-	global UDP_IP
-	global UDP_PORT
-	print("UDP target IP:", UDP_IP)
-	print("UDP target port:", UDP_PORT)
-	print("message:", message)
-	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # UDP
-	sock.sendto(bytes(message), (UDP_IP, UDP_PORT))
-senddata()
+import requests
+import glob
+import os
+
+list_of_files = glob.glob('/home/pi/MotionImages/*') 
+latest_file = max(list_of_files, key=os.path.getctime)
+
+with open(latest_file, 'rb') as f:
+	r = requests.post('http://80.211.171.119:3000/upload',files={'sampleFile':f})
+print(r.status_code)
+
+if(r.status_code == requests.codes.ok):
+	os.remove(latest_file)
+	
+
