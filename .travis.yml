@@ -3,6 +3,9 @@ matrix:
         - language: python
           python:
               - "3.6"
+          before_script:
+              - cd raspberry
+              - pip install -r requirements.txt
           script:
               - pytest
 
@@ -10,6 +13,7 @@ matrix:
           node_js:
               - "node"
           before_script:
-              - npm install -g jscs
+              - cd imageserver
+              - npm i
           script:
-              - jscs -c "./webserver/.jscsrc" webserver/src
+              - npm test

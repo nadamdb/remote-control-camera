@@ -1,2 +1,13 @@
-.vagrant 
-ubuntu-xenial-16.04-cloudimg-console.log
+vagrant/.vagrant
+vagrant/ubuntu-*-console.log
+imageserver/*log*
+../*.log 
+node_modules
+**/uploads/*.png
+**/uploads/*.jpg
+**.idea
+**.vscode
+raspberry/server/cameraapiserver
+raspberry/server/__pycache__
+raspberry/tests/__pycache__
+raspberry/.pytest_cache
