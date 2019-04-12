@@ -4,13 +4,16 @@ const http = require("http");
 const timestamp = require('time-stamp');
 const express = require("express");
 const fileUpload = require('express-fileupload');
+const axios = require('axios');
 var sqlite3 = require('sqlite3').verbose();
 
 const app = express();
 const httpServer = http.createServer(app);
 const PORT = process.env.PORT || 3000;
 var db = new sqlite3.Database('./movements.db');
-
+var python_server_ip = "localhost";
+var python_server_port = 3000;
+axios.defaults.port = 3000;
 // Important! Where to move the uploaded file on the server. 
 let path = 'public/uploads/';
 
@@ -32,6 +35,9 @@ app.use(fileUpload());
 // Serving static files, like uploaded images
 app.use(express.static('public'));
 app.use(express.static(__dirname + '/../website/'));
+
+
+
 
 // /upload site to post images (ex.: curl -X POST http://csontho.info:3000/upload -F sampleFile=@image.png )
 app.post('/upload', function (req, res) {
@@ -83,7 +89,7 @@ app.post('/upload', function (req, res) {
     }
 
     console.log('[Image Server][' + timeStamp + '] Image "' + sampleFile.name + '" uploaded to the server. Renamed to "' + imageName + '"');
-    db.run('INSERT INTO movements(date_time, path, image) VALUES(?, ?, ?)', [timeStamp, url, imageName], (err) => {
+    db.run('INSERT INTO movements(date_time, path, image, is_new) VALUES(?, ?, ?, ?)', [timeStamp, url, imageName, 1], (err) => {
       if (err) {
         return console.log('[Image Server][' + timestamp.utc('YYYY-MM-DD_HH-mm-ss') + '] ' + err.message);
       }
@@ -91,6 +97,9 @@ app.post('/upload', function (req, res) {
     })
   });
 });
+
+
+
 
 if (legacyHTMLformat) {
   app.get("/movements", function (req, res) {
@@ -134,34 +143,56 @@ else {
       var json_end = ']}'
       rows.forEach((row) => {
         var tmpImageUrl = 'uploads/' + row.image;
-        answer = '{"timestamp":"' + row.date_time + '", "url":"' + URL_this_running_on + '/' + tmpImageUrl + '","path":"' + row.path + '"},' + answer;
+        answer = '{"timestamp":"' + row.date_time + '", "url":"' + URL_this_running_on + '/' + tmpImageUrl + '","path":"' + row.path + '","is_new":"'+row.is_new+'"},' + answer;
       });
       answer = answer.substring(0, answer.length - 1);
       answer = json_front + answer + json_end;
       res.end(answer);
+      
     });
+    // Reset isNew
+    var sql_reset = "UPDATE movements SET is_new = 0 WHERE is_new = 1";
+    db.all(sql_reset, [], (err, rows) => {
+      if (err) {
+        console.log('[Image Server][' + timestamp.utc('YYYY-MM-DD_HH-mm-ss') + '] ' + err);
+        return;
+      }});
+      
   });
 }
 
+app.put("/motion", function(req, res){
+    
+    console.log("/ motion arrived = MOTION DETECTED");
+    res.status(200).send("It's not good my friend");
+    // DO THINGS
+});
 
 // Toggle camera on / off
 app.post("/camera", function (req, res) {
   // Toggle camera
+  console.log(req.body)
   console.log('[Image Server][' + timestamp.utc('YYYY-MM-DD_HH-mm-ss') + '] Camera turned ON / OFF');
   if (toggle_camera() === "ok") {
     res.status(200).send();
   } else {
     res.status(503).send();
   }
+
+  // SEND TO PYTHON POST
 });
+
 
 // GET camera status
 app.get("/camera", function (req, res) {
-  let status = getrandom();
-  if (status == 1) {
+  var camera_status = getMethod("/status")
+  if (camera_status == "ON") {
     res.send("ON");
-  } else {
+  } else if(camera_status == "OFF"){
     res.send("OFF");
+  }
+  else {
+    res.send("unknown");
   }
 
 });
@@ -178,4 +209,23 @@ function getrandom() {
   return rnd;
 }
 
+function getMethod(url){
+
+  axios({
+    method: 'get',
+    url: "http://"+python_server_ip+":"+python_server_port+url
+  })
+  .then(function (response) {
+    // handle success
+    return response.data;
+  })
+  .catch(function (error) {
+    // handle error
+    console.log(error);
+    return "400"
+  })
+  .then(function () {
+    // always executed
+  });  
+}
 module.exports = app;
