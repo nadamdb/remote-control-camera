@@ -9,12 +9,12 @@ Application running on PORT 3000.
 - Python server communication
 ## Used:
 
--express
--express-fileupload
--time-stamp
--sqlite3
--axios (!!!! NEW !!!! FOR async http)
--body-parser (!!!! NEW !!!!)
+- express
+- express-fileupload
+- time-stamp
+- sqlite3
+- axios (!!!! NEW !!!! FOR async http)
+- body-parser (!!!! NEW !!!!)
 
 ## npm
 
