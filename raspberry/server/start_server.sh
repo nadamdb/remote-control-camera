@@ -5,6 +5,7 @@ else
     SERVERDIR=$(realpath $1)
 fi
 cd $SERVERDIR
+sudo systemctl stop cameraapi
 SERVERDIRESCAPED="${SERVERDIR//\//\\/}"
 sed "s/__SERVERDIR__/$SERVERDIRESCAPED/g" cameraapi.service.template >  cameraapi.service 
 cat cameraapi.service
