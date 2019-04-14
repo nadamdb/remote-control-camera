@@ -26,16 +26,25 @@ def getCameraStatus():
 def cameraonoff():
     operation= request.get_json()
     print(operation)
-    if operation["value"] == "off":
-        turnoffcamera()
-    elif operation["value"] == "on":
-        turnoncamera()
+    validoperation = True
+    if operation != None and "value" in operation:
+        if operation["value"] == "off":
+            turnoffcamera()
+        elif operation["value"] == "on":
+            turnoncamera()
+        else:
+            validoperation = False
     else:
-        print("invalid operation")
+        validoperation = False
+
+    if validoperation:
+        return jsonify(getCameraStatus())
+    else:
         message = {}
-        message["errormessage"] = "operation %s not valid" % operation["value"]
+        message["errormessage"] = "operation %s not valid" % json.dumps(operation)
+        print(message["errormessage"])
         return app.response_class(response=json.dumps(message), status=400, mimetype='application/json')
-    return jsonify(getCameraStatus())
+
 
 
 def turnoncamera():
