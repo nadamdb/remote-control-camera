@@ -117,7 +117,7 @@ describe("Test /movements route", () => {
     // Test to get all students record
     it("One movement in db", (done) => {
         //insert a movement
-        db.run('INSERT INTO movements(date_time, path, image) VALUES(?, ?, ?)', ['2019-03-27_09-56-11', '/justanurl', 'test'], (err) => {
+        db.run('INSERT INTO movements(date_time, path, image,is_new) VALUES(?, ?, ?, ?)', ['2019-03-27_09-56-11', '/justanurl', 'test', 1], (err) => {
             if(err) {
                 throw err;
             }
@@ -131,7 +131,7 @@ describe("Test /movements route", () => {
                 chai.expect(res.movements).not.undefined;
                 chai.expect(res.movements.length).to.be.equal(1);
                 var movement = res.movements[0];
-                chai.expect(movement).to.deep.equal({timestamp:'2019-03-27_09-56-11', url:'/uploads/test', path:'/justanurl'})
+                chai.expect(movement).to.deep.equal({is_new: "1", timestamp:'2019-03-27_09-56-11', url:'/uploads/test', path:'/justanurl'})
                 done();   
             });
         })
