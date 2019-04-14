@@ -1,0 +1,13 @@
+[Unit]
+Description=uWSGI instance to serve cameraapi
+After=network.target
+
+[Service]
+User=root
+Group=www-data
+WorkingDirectory=__SERVERDIR__
+Environment="PATH=__SERVERDIR__/cameraapiserver/bin"
+ExecStart=__SERVERDIR__/cameraapiserver/bin/uwsgi --ini cameraapi.ini
+
+[Install]
+WantedBy=multi-user.target
