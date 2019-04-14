@@ -36,24 +36,12 @@ Vagrant.configure("2") do |config|
   config.vm.define "raspberry" do |raspberry|
     raspberry.vm.box = "ubuntu/bionic64"
     raspberry.vm.synced_folder "../raspberry", "/raspberry", create: true ,owner: "vagrant",   group: "vagrant"
-    raspberry.vm.provision :shell, path: "bootstrap_raspberry.sh" 
+    raspberry.vm.provision :shell, path: "../raspberry/server/setup_raspberry_python.sh" , args: "/raspberry/server"
     raspberry.vm.network "private_network", ip: "192.168.66.3"
 
     raspberry.trigger.after :up do |trigger|
       trigger.info = "Starting python server..."
-      trigger.run_remote = {inline: <<-SHELL
-          cd /raspberry/server
-          sudo cp  cameraapi.service /etc/systemd/system/ 
-          sudo cp  cameraapi /etc/nginx/sites-available/
-          sudo systemctl daemon-reload
-          sudo ln -s /etc/nginx/sites-available/cameraapi /etc/nginx/sites-enabled
-          sudo touch /var/run/cameraapi.sock
-          sudo systemctl start cameraapi
-          sudo ufw allow 'Nginx Full'
-          sudo systemctl restart nginx
-          echo "started server"
-        SHELL
-      }
+      trigger.run_remote = { path:"../raspberry/server/start_server.sh", args: "/raspberry/server"}
     end
   end
 

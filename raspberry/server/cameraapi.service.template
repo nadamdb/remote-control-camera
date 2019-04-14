@@ -8,6 +8,8 @@ Group=www-data
 WorkingDirectory=__SERVERDIR__
 Environment="PATH=__SERVERDIR__/cameraapiserver/bin"
 ExecStart=__SERVERDIR__/cameraapiserver/bin/uwsgi --ini cameraapi.ini
+Restart=always
+RestartSec=5
 
 [Install]
 WantedBy=multi-user.target

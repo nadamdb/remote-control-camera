@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
-SERVERDIR=$(realpath $1)
+if [ "$#" -ne 1 ]; then
+    SERVERDIR=$(pwd)
+else
+    SERVERDIR=$(realpath $1)
+fi
 cd $SERVERDIR
 SERVERDIRESCAPED="${SERVERDIR//\//\\/}"
 sed "s/__SERVERDIR__/$SERVERDIRESCAPED/g" cameraapi.service.template >  cameraapi.service 
@@ -15,4 +19,5 @@ sudo ufw allow 'Nginx Full'
 sudo systemctl restart nginx
 echo "started server"
 sudo systemctl status cameraapi&
+echo "DONE"
 

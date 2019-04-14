@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
-SERVERDIR=$(realpath $1)
+
+if [ "$#" -ne 1 ]; then
+    SERVERDIR=$(pwd)
+else
+    SERVERDIR=$(realpath $1)
+fi
 echo "python server directory: $SERVERDIR"
 sudo apt-get update
 sudo apt install python3-pip python3-dev python3-venv \

@@ -8,6 +8,7 @@ node_modules
 **.idea
 **.vscode
 raspberry/server/cameraapiserver
+raspberry/server/cameraapi.service
 raspberry/server/__pycache__
 raspberry/tests/__pycache__
 raspberry/.pytest_cache

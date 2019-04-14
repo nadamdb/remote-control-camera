@@ -5,9 +5,11 @@ After=network.target
 [Service]
 User=root
 Group=www-data
-WorkingDirectory=/home/pi/remote-control-camera/raspberry/server
-Environment="PATH=/home/pi/remote-control-camera/raspberry/server/cameraapiserver/bin"
-ExecStart=/home/pi/remote-control-camera/raspberry/server/cameraapiserver/bin/uwsgi --ini cameraapi.ini
+WorkingDirectory=/raspberry/server
+Environment="PATH=/raspberry/server/cameraapiserver/bin"
+ExecStart=/raspberry/server/cameraapiserver/bin/uwsgi --ini cameraapi.ini
+Restart=always
+RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
