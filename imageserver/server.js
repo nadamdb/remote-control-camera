@@ -19,8 +19,7 @@ axios.defaults.port = python_server_port;
 let path = 'public/uploads/';
 
 
-// Answer is JSON or HTLM site. (HTML used for testing)
-var legacyHTMLformat = false;
+
 // Used for ?? (I don't really know)
 var URL_this_running_on = ""; //"http://csontho.info:3000";
 
@@ -46,12 +45,9 @@ app.post('/upload', function (req, res) {
   if (req.files != null) {
 
     if (Object.keys(req.files).length == 0) {
-      if (legacyHTMLformat) {
-        var status_400_response = "<html><head><title>Upload failed!</title></head><body> Upload failed." + ' <a href="' + URL_this_running_on + 'index.html">Take me back to the upload form</a> / <a href="' + URL_this_running_on + '/movements"> Visit /movements site</a>'
-        return res.status(400).send(status_400_response);
-      } else {
+      
         return res.status(400).send();
-      }
+      
     }
   } else {
     //console.log("No file uploaded");
@@ -66,11 +62,9 @@ app.post('/upload', function (req, res) {
     console.log("[Image Server][" + timestamp.utc('YYYY-MM-DD_HH-mm-ss') + "] File format was ok: " + filename);
   }
   else {
-    if (legacyHTMLformat) {
-      return res.status(400).send('Wrong format.');
-    } else {
+    
       return res.status(400).send(400);
-    }
+    
 
   }
 
@@ -83,12 +77,8 @@ app.post('/upload', function (req, res) {
   sampleFile.mv(url, function (err) {
     if (err)
       return res.status(500).send(err);
-    var success_response = "<html><head><title>Upload complete!</title></head><body> Upload completed. File: " + imageName + ' uploaded to the server. <a href="' + URL_this_running_on + 'index.html">Take me back to the upload form</a> / <a href="' + URL_this_running_on + '/movements"> Visit /movements site</a>'
-    if (legacyHTMLformat) {
-      res.send(success_response);
-    } else {
-      res.send(200);
-    }
+  res.send(200);
+    
 
     console.log('[Image Server][' + timeStamp + '] Image "' + sampleFile.name + '" uploaded to the server. Renamed to "' + imageName + '"');
     db.run('INSERT INTO movements(date_time, path, image, is_new) VALUES(?, ?, ?, ?)', [timeStamp, url, imageName, 1], (err) => {
@@ -101,34 +91,6 @@ app.post('/upload', function (req, res) {
 });
 
 
-
-
-if (legacyHTMLformat) {
-  app.get("/movements", function (req, res) {
-    //res.send('Hello world!');
-    var html_begin = '<html><head><title>Detected movements</title><link rel="stylesheet" type="text/css" href="styles/styles.css"></head><body><div class="body-div"><table><tr><th>Date & Time of movement</th><th>Image name</th><th>Path in server</th><th>Small size image</th><th></th></tr>';
-    var html_end = "</table></div></body></html>";
-    var sql = "SELECT * FROM movements";
-
-    db.all(sql, [], (err, rows) => {
-      if (err) {
-        console.log('[Image Server][' + timestamp.utc('YYYY-MM-DD_HH-mm-ss') + '] ' + err);
-        res.send('Table is missing.');
-        return;
-      }
-      var answer = "";
-      rows.forEach((row) => {
-        var tmpImageUrl = 'uploads/' + row.image;
-        answer = '<tr><td>' + row.date_time + '</td><td>' + row.image + '</td><td>' + row.path + '</td><td><img src="' + tmpImageUrl + '" width="50" /></td><td><a target="_blank" href="' + tmpImageUrl + '" class="button">Open in new tab</a></td></tr>' + answer;
-      });
-
-      var response = html_begin + answer + html_end;
-      res.send(response);
-    });
-  });
-
-}
-else {
   app.get("/movements", function (req, res) {
     var sql = "SELECT * FROM movements";
 
@@ -161,7 +123,7 @@ else {
       }});
       
   });
-}
+
 
 app.put("/motion", function(req, res){
     
@@ -227,10 +189,7 @@ function getMethod(url){
     url: "http://"+python_server_ip+":"+python_server_port+url
   })
 }
-app.post('/test', function(req,res){
-  res.status(200).send("ok");
-  console.log("/test: "+req.data)
-});
+
 
 function postMethod(command){
   console.log("Axiospost command:"+command)
