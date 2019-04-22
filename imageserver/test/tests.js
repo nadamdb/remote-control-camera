@@ -5,11 +5,16 @@ const fs = require('fs');
 var sqlite3 = require('sqlite3').verbose();
 var db = null;
 const path = require('path');
+var nock = require('nock');
 
 const directory = 'public/uploads';
 
 chai.use(chaiHttp);
 chai.should();
+
+var sinon = require("sinon");
+
+var server;
 
 describe("Test File Upload", () => {
         // Test to get all students record
@@ -136,6 +141,43 @@ describe("Test /movements route", () => {
             });
         })
     });
+
+    // Test to get all students record
+    it("Movement first read, second read", (done) => {
+        //insert a movement
+        db.run('INSERT INTO movements(date_time, path, image,is_new) VALUES(?, ?, ?, ?)', ['2019-03-27_09-56-11', '/justanurl', 'test', 1], (err) => {
+            if(err) {
+                throw err;
+            }
+            chai.request(app)
+            .get('/movements')
+            .end((err, res) => {
+                //check status code
+                res.should.have.status(200);
+                //response has the movement inserted before
+                var res = JSON.parse(res.text);
+                chai.expect(res.movements).not.undefined;
+                chai.expect(res.movements.length).to.be.equal(1);
+                var movement = res.movements[0];
+                chai.expect(movement).to.deep.equal({is_new: "1", timestamp:'2019-03-27_09-56-11', url:'/uploads/test', path:'/justanurl'})
+                
+
+                chai.request(app)
+                .get('/movements')
+                .end((err, res) => {
+                    //check status code
+                    res.should.have.status(200);
+                    //response has the movement inserted before
+                    var res = JSON.parse(res.text);
+                    chai.expect(res.movements).not.undefined;
+                    chai.expect(res.movements.length).to.be.equal(1);
+                    var movement = res.movements[0];
+                    chai.expect(movement).to.deep.equal({is_new: "0", timestamp:'2019-03-27_09-56-11', url:'/uploads/test', path:'/justanurl'})
+                    done();
+                });
+            });
+        })
+    });
     
     beforeEach(function(done){
         db.run('DELETE FROM movements',[],function(err){
@@ -162,5 +204,63 @@ describe("Test /movements route", () => {
         db.close(()=>{
             done();
         });
+    });
+});
+
+describe("Status routes", (done)=>{
+    before(function () { server = sinon.fakeServer.create(); });
+    after(function () { server.restore(); });
+
+    it("Get /camera, server respons with on", function (done) {
+
+        // Set up an interceptor
+        nock('http://192.168.66.3:5000')
+            .get('/status')
+            .reply(200, { status: 'on' });
+
+        chai.request(app)
+            .get('/camera')
+            .end((err, res) => {
+                chai.expect(res.status).to.be.equal(200);
+                console.log(res.text);
+                chai.expect(res.text).to.be.equal('ON');
+                done();
+            });
+
+    });
+
+    it("Get /camera, server respons with off", function (done) {
+
+        // Set up an interceptor
+        nock('http://192.168.66.3:5000')
+            .get('/status')
+            .reply(200, { status: 'off' });
+
+        chai.request(app)
+            .get('/camera')
+            .end((err, res) => {
+                chai.expect(res.status).to.be.equal(200);
+                console.log(res.text);
+                chai.expect(res.text).to.be.equal('OFF');
+                done();
+            });
+
+    });
+
+    it("Get /camera, server respons with random value", function (done) {
+
+        // Set up an interceptor
+        nock('http://192.168.66.3:5000')
+            .get('/status')
+            .reply(200, { status: 'asdasd' });
+
+        chai.request(app)
+            .get('/camera')
+            .end((err, res) => {
+                chai.expect(res.status).to.be.equal(200);
+                chai.expect(res.text).to.be.equal('unknown');
+                done();
+            });
+
     });
 });
