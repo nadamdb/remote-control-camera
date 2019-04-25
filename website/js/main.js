@@ -41,4 +41,26 @@ $(document).ready(function(){
 
 		return false;
 	});
+
+	updateBadge();
+
+	// check in every 5 secs if there is new movement(s) and update badge number
+	setTimeout(function(){
+		updateBadge();
+	}, 5000);
+
+	// TODO: when we open notifications, append the new movements (is_new == 1) and update them to is_new = 0
 });
+
+function updateBadge() {
+	$.ajax({
+		method: "GET",
+		url: "http://192.168.66.2:3000/new-movements",
+		success: function (data) {
+			var count = data.length;
+			$("#noti-badge").html(count);
+
+			// TODO: bootstrap-growl
+		}
+	});
+}
