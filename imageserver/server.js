@@ -45,9 +45,9 @@ app.post('/upload', function (req, res) {
   if (req.files != null) {
 
     if (Object.keys(req.files).length == 0) {
-      
-        return res.status(400).send();
-      
+
+      return res.status(400).send();
+
     }
   } else {
     //console.log("No file uploaded");
@@ -62,9 +62,9 @@ app.post('/upload', function (req, res) {
     console.log("[Image Server][" + timestamp.utc('YYYY-MM-DD_HH-mm-ss') + "] File format was ok: " + filename);
   }
   else {
-    
-      return res.status(400).send(400);
-    
+
+    return res.status(400).send(400);
+
 
   }
 
@@ -77,8 +77,8 @@ app.post('/upload', function (req, res) {
   sampleFile.mv(url, function (err) {
     if (err)
       return res.status(500).send(err);
-  res.send(200);
-    
+    res.send(200);
+
 
     console.log('[Image Server][' + timeStamp + '] Image "' + sampleFile.name + '" uploaded to the server. Renamed to "' + imageName + '"');
     db.run('INSERT INTO movements(date_time, path, image, is_new) VALUES(?, ?, ?, ?)', [timeStamp, url, imageName, 1], (err) => {
@@ -90,46 +90,101 @@ app.post('/upload', function (req, res) {
   });
 });
 
+app.get("/stats", function (req, res) {
 
-  app.get("/movements", function (req, res) {
-    var sql = "SELECT * FROM movements";
+  var sql = "SELECT COUNT(path) as number FROM movements WHERE is_new=1";
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      console.log('[Image Server][' + timestamp.utc('YYYY-MM-DD_HH-mm-ss') + '] ' + err);
+      res.send('Table is missing.');
+      return;
+    }
 
-    db.all(sql, [], (err, rows) => {
-      if (err) {
-        console.log('[Image Server][' + timestamp.utc('YYYY-MM-DD_HH-mm-ss') + '] ' + err);
-        res.send('Table is missing.');
-        return;
-      }
-
-      res.writeHead(200, { "Content-Type": "application/json" });
-      var answer = "";
-      var json_front = '{ "movements": ['
-      var json_end = ']}'
-      rows.forEach((row) => {
-        var tmpImageUrl = 'uploads/' + row.image;
-        answer = '{"timestamp":"' + row.date_time + '", "url":"' + URL_this_running_on + '/' + tmpImageUrl + '","path":"' + row.path + '","is_new":"'+row.is_new+'"},' + answer;
-      });
-      answer = answer.substring(0, answer.length - 1);
-      answer = json_front + answer + json_end;
-      res.end(answer);
-      
+    res.writeHead(200, { "Content-Type": "application/json" });
+    var answer = "";
+    var json_front = '{ "movements": "'
+    var json_end = '"}'
+    rows.forEach((row) => {
+      answer = row.number;
     });
-    // Reset isNew
-    var sql_reset = "UPDATE movements SET is_new = 0 WHERE is_new = 1";
-    db.all(sql_reset, [], (err, rows) => {
-      if (err) {
-        console.log('[Image Server][' + timestamp.utc('YYYY-MM-DD_HH-mm-ss') + '] ' + err);
-        return;
-      }});
-      
+    answer = json_front + answer + json_end;
+    res.end(answer);
+
+  });
+});
+
+app.get("/movements", function (req, res) {
+  var sql = "SELECT * FROM movements";
+
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      console.log('[Image Server][' + timestamp.utc('YYYY-MM-DD_HH-mm-ss') + '] ' + err);
+      res.send('Table is missing.');
+      return;
+    }
+
+    res.writeHead(200, { "Content-Type": "application/json" });
+    var answer = "";
+    var json_front = '{ "movements": ['
+    var json_end = ']}'
+    rows.forEach((row) => {
+      var tmpImageUrl = 'uploads/' + row.image;
+      answer = '{"timestamp":"' + row.date_time + '", "url":"' + URL_this_running_on + '/' + tmpImageUrl + '","path":"' + row.path + '","is_new":"' + row.is_new + '"},' + answer;
+    });
+    answer = answer.substring(0, answer.length - 1);
+    answer = json_front + answer + json_end;
+    res.end(answer);
+
+  });
+  // Reset isNew
+  var sql_reset = "UPDATE movements SET is_new = 0 WHERE is_new = 1";
+  db.all(sql_reset, [], (err, rows) => {
+    if (err) {
+      console.log('[Image Server][' + timestamp.utc('YYYY-MM-DD_HH-mm-ss') + '] ' + err);
+      return;
+    }
   });
 
+});
 
-app.put("/motion", function(req, res){
-    
-    console.log("/ motion arrived = MOTION DETECTED");
-    res.status(200).send("It's not good my friend");
-    // DO THINGS
+app.get("/newmovements", function (req, res) {
+  var sql = "SELECT * FROM movements WHERE is_new = 1";
+
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      console.log('[Image Server][' + timestamp.utc('YYYY-MM-DD_HH-mm-ss') + '] ' + err);
+      res.send('Table is missing.');
+      return;
+    }
+
+    res.writeHead(200, { "Content-Type": "application/json" });
+    var answer = "";
+    var json_front = '{ "movements": ['
+    var json_end = ']}'
+    rows.forEach((row) => {
+      var tmpImageUrl = 'uploads/' + row.image;
+      answer = '{"timestamp":"' + row.date_time + '", "url":"' + URL_this_running_on + '/' + tmpImageUrl + '","path":"' + row.path + '","is_new":"' + row.is_new + '"},' + answer;
+    });
+    answer = answer.substring(0, answer.length - 1);
+    answer = json_front + answer + json_end;
+    res.end(answer);
+
+  });
+  // Reset isNew
+  // var sql_reset = "UPDATE movements SET is_new = 0 WHERE is_new = 1";
+  // db.all(sql_reset, [], (err, rows) => {
+  //   if (err) {
+  //     console.log('[Image Server][' + timestamp.utc('YYYY-MM-DD_HH-mm-ss') + '] ' + err);
+  //     return;
+  //   }});
+
+});
+
+app.put("/motion", function (req, res) {
+
+  console.log("/ motion arrived = MOTION DETECTED");
+  res.status(200).send("It's not good my friend");
+  // DO THINGS
 });
 
 // Toggle camera on / off
@@ -137,11 +192,11 @@ app.post("/camera", function (req, res) {
   // Toggle camere
   console.log(req.body)
   var command = req.body.value
-  if(command == "on" || command == "off"){
-    console.log('[Image Server][' + timestamp.utc('YYYY-MM-DD_HH-mm-ss') + '] Camera turned '+req.body.value);
+  if (command == "on" || command == "off") {
+    console.log('[Image Server][' + timestamp.utc('YYYY-MM-DD_HH-mm-ss') + '] Camera turned ' + req.body.value);
     postMethod(command)
     res.status(200).send()
-  }else {
+  } else {
     console.log('[Image Server][' + timestamp.utc('YYYY-MM-DD_HH-mm-ss') + '] wrong request');
     res.status(400).send();
   }
@@ -151,11 +206,11 @@ app.post("/camera", function (req, res) {
 
 // GET camera status
 app.get("/camera", function (req, res) {
-   getMethod("/status").then(function(result){
+  getMethod("/status").then(function (result) {
     var camera_status = result.data;
     if (camera_status.status == "on") {
       res.send("ON");
-    } else if(camera_status.status == "off"){
+    } else if (camera_status.status == "off") {
       res.send("OFF");
     }
     else {
@@ -165,47 +220,36 @@ app.get("/camera", function (req, res) {
     // handle error
     console.log(error);
     return "400"
-  }) 
- 
+  })
+
 
 });
 
-// Ez fogja meghívni a kamera kezelőt
-function toggle_camera() {
-  return "ok";
-}
 
-// Változzon a lekért adat azért, könnyebb legyen fejleszteni frontendet.
-function getrandom() {
-  let rnd_time = timestamp.utc('ss');
-  let rnd = rnd_time % 2;
-  return rnd;
-}
-
-function getMethod(url){
+function getMethod(url) {
 
   return axios({
     method: 'get',
-    url: "http://"+python_server_ip+":"+python_server_port+url
+    url: "http://" + python_server_ip + ":" + python_server_port + url
   })
 }
 
 
-function postMethod(command){
-  console.log("Axiospost command:"+command)
+function postMethod(command) {
+  console.log("Axiospost command:" + command)
   axios({
     method: 'post',
-    url: "http://"+python_server_ip+":"+python_server_port+"/camera",
+    url: "http://" + python_server_ip + ":" + python_server_port + "/camera",
     data: {
       value: command
     }
   })
-.then((res) => {
-  console.log(`statusCode: ${res.status}`)
-  console.log(res.data)
-})
-.catch((error) => {
-  console.error(error)
-})
+    .then((res) => {
+      console.log(`statusCode: ${res.status}`)
+      console.log(res.data)
+    })
+    .catch((error) => {
+      console.error(error)
+    })
 }
 module.exports = app;
