@@ -11,7 +11,7 @@ matrix:
 
         - language: node_js
           node_js:
-              - "node"
+              - "11"
           before_script:
               - cd imageserver
               - npm i
