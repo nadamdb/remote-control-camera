@@ -4,7 +4,7 @@
   "description": "Image saver webserver for University project",
   "main": "server.js",
   "scripts": {
-    "test": "mocha test --exit",
+    "test": "nyc --reporter=html --reporter=text mocha --exit",
     "start": "node server.js"
   },
   "keywords": [
@@ -24,5 +24,8 @@
     "sinon": "^7.3.2",
     "sqlite3": "^4.0.6",
     "time-stamp": "^2.2.0"
+  },
+  "devDependencies": {
+    "nyc": "^14.0.0"
   }
 }
