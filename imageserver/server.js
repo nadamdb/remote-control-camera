@@ -192,14 +192,21 @@ app.post("/camera", function (req, res) {
   // Toggle camere
   console.log(req.body)
   var command = req.body.value
-  if (command == "on" || command == "off") {
-    console.log('[Image Server][' + timestamp.utc('YYYY-MM-DD_HH-mm-ss') + '] Camera turned ' + req.body.value);
-    postMethod(command)
-    res.status(200).send()
-  } else {
+  if (command != "on" && command != "off") {
     console.log('[Image Server][' + timestamp.utc('YYYY-MM-DD_HH-mm-ss') + '] wrong request');
     res.status(400).send();
+    return;
   }
+  postMethod(command).then((result) => {
+    console.log('[Image Server][' + timestamp.utc('YYYY-MM-DD_HH-mm-ss') + '] Camera turned ' + command);
+    console.log(`statusCode: ${result.status}`);
+    console.log(result.data);
+    res.status(200).send()
+  }).catch((error) => {
+    console.error(error)
+    console.log('[Image Server][' + timestamp.utc('YYYY-MM-DD_HH-mm-ss') + '] error at server');
+    res.status(500).send();
+  })
 
 });
 
@@ -219,7 +226,7 @@ app.get("/camera", function (req, res) {
   }).catch(function (error) {
     // handle error
     console.log(error);
-    return "400"
+    res.status(500).send();
   })
 
 
@@ -237,19 +244,12 @@ function getMethod(url) {
 
 function postMethod(command) {
   console.log("Axiospost command:" + command)
-  axios({
+  return axios({
     method: 'post',
     url: "http://" + python_server_ip + ":" + python_server_port + "/camera",
     data: {
       value: command
     }
   })
-    .then((res) => {
-      console.log(`statusCode: ${res.status}`)
-      console.log(res.data)
-    })
-    .catch((error) => {
-      console.error(error)
-    })
 }
 module.exports = app;
