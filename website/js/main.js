@@ -45,22 +45,47 @@ $(document).ready(function(){
 	updateBadge();
 
 	// check in every 5 secs if there is new movement(s) and update badge number
-	setTimeout(function(){
+	setInterval(function(){
 		updateBadge();
-	}, 5000);
+	}, 2000);
 
-	// TODO: when we open notifications, append the new movements (is_new == 1) and update them to is_new = 0
+	$("#noti-dropdown").on("click", function(e){
+		$('#notifications-dropdown .drop-content').html('');
+
+		if (!$(".notify-drop").is(":visible"))
+		{
+			$.ajax({
+				method: "GET",
+				url: "http://192.168.66.2:3000/newmovements",
+				success: function (data) {
+					var movements = data.movements;
+					var count = movements.length;
+
+					$(".noti-badge").html(count);
+
+					$.each(data.movements, function(i,e){
+						$('#notifications-dropdown .drop-content').append(
+							'<li>' +
+								'<div class="col-md-3 col-sm-3 col-xs-3"><div class="notify-img"><img src="'+e.path+'" alt=""></div></div>' +
+								'<div class="col-md-9 col-sm-9 col-xs-9 pd-l0">'+e.timestamp+'<i class="fa fa-dot-circle-o"></i></div>' +
+							'</li>'
+						);
+					});
+				}
+			});
+		}
+
+		return true;
+	});
 });
 
 function updateBadge() {
 	$.ajax({
 		method: "GET",
-		url: "http://192.168.66.2:3000/new-movements",
+		url: "http://192.168.66.2:3000/stats",
 		success: function (data) {
-			var count = data.length;
-			$("#noti-badge").html(count);
-
-			// TODO: bootstrap-growl
+			var count = data.movements;
+			$(".noti-badge").html(count);
 		}
 	});
 }

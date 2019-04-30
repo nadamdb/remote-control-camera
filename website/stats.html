@@ -27,19 +27,19 @@
                     <a class="nav-link" href="index.html">Home <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
-                    <a id="on" class="nav-link" href="#">ON</a>
+                    <a id="camera-on" class="nav-link" href="#">ON</a>
                 </li>
                 <li class="nav-item">
-                    <a id="off" class="nav-link" href="#">OFF</a>
+                    <a id="camera-off" class="nav-link" href="#">OFF</a>
                 </li>
             </ul>
-            <ul class="navbar-nav ml-auto">
+            <ul class="navbar-nav ml-auto" id="notifications-dropdown">
                 <li class="dropdown" style="margin-top: 8px;">
-                    <a href="#" class="dropdown-toggle" style="color: white !important;" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Notifications (<b id="noti-badge">0</b>)</a>
+                    <a href="#" id="noti-dropdown" class="dropdown-toggle" style="color: white !important;" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Notifications (<b class="noti-badge">0</b>)</a>
                     <ul class="dropdown-menu notify-drop">
                         <div class="notify-drop-title">
                             <div class="row">
-                                <div class="col-md-6 col-sm-6 col-xs-6">Notifications (<b>3</b>)</div>
+                                <div class="col-md-6 col-sm-6 col-xs-6">Notifications (<b class="noti-badge">0</b>)</div>
                                 <div class="col-md-6 col-sm-6 col-xs-6 text-right"><a href="" class="rIcon allRead" data-tooltip="tooltip" data-placement="bottom"><i class="fa fa-dot-circle-o"></i></a></div>
                             </div>
                         </div>
@@ -81,46 +81,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>2019.03.19 <br/><small>08:33:17</small></td>
-                            <td class="text-center">
-                                <a href="img/goat1.jpg" class="image-link">
-                                    <img src="img/goat1.jpg" alt="Goat #1" style="width: 100px;">
-                                </a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>2019.03.18 <br/><small>18:30:07</small></td>
-                            <td class="text-center">
-                                <a href="img/goat2.jpg" class="image-link">
-                                    <img src="img/goat2.jpg" alt="Goat #2" style="width: 100px;">
-                                </a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>2019.03.18 <br/><small>11:44:22</small></td>
-                            <td class="text-center">
-                                <a href="img/goat3.jpg" class="image-link">
-                                    <img src="img/goat3.jpg" alt="Goat #3" style="width: 100px;">
-                                </a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>2019.03.18 <br/><small>09:18:34</small></td>
-                            <td class="text-center">
-                                <a href="img/goat1.jpg" class="image-link">
-                                    <img src="img/goat1.jpg" alt="Goat #4" style="width: 100px;">
-                                </a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>2019.03.15 <br/><small>12:09:51</small></td>
-                            <td class="text-center">
-                                <a href="img/goat2.jpg" class="image-link">
-                                    <img src="img/goat2.jpg" alt="Goat #5" style="width: 100px;">
-                                </a>
-                            </td>
-                        </tr>
+                        
                     </tbody>
                     <tfoot>
                         
@@ -134,6 +95,5 @@
     </footer>
     <script src="js/main.js"></script>
     <script src="js/stats.js"></script>
-    <script src="js/navbar.js"></script>
 </body>
 </html>

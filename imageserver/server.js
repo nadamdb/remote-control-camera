@@ -137,13 +137,13 @@ app.get("/movements", function (req, res) {
 
   });
   // Reset isNew
-  var sql_reset = "UPDATE movements SET is_new = 0 WHERE is_new = 1";
-  db.all(sql_reset, [], (err, rows) => {
-    if (err) {
-      console.log('[Image Server][' + timestamp.utc('YYYY-MM-DD_HH-mm-ss') + '] ' + err);
-      return;
-    }
-  });
+  // var sql_reset = "UPDATE movements SET is_new = 0 WHERE is_new = 1";
+  // db.all(sql_reset, [], (err, rows) => {
+  //   if (err) {
+  //     console.log('[Image Server][' + timestamp.utc('YYYY-MM-DD_HH-mm-ss') + '] ' + err);
+  //     return;
+  //   }
+  // });
 
 });
 
@@ -171,12 +171,12 @@ app.get("/newmovements", function (req, res) {
 
   });
   // Reset isNew
-  // var sql_reset = "UPDATE movements SET is_new = 0 WHERE is_new = 1";
-  // db.all(sql_reset, [], (err, rows) => {
-  //   if (err) {
-  //     console.log('[Image Server][' + timestamp.utc('YYYY-MM-DD_HH-mm-ss') + '] ' + err);
-  //     return;
-  //   }});
+  var sql_reset = "UPDATE movements SET is_new = 0 WHERE is_new = 1";
+  db.all(sql_reset, [], (err, rows) => {
+    if (err) {
+      console.log('[Image Server][' + timestamp.utc('YYYY-MM-DD_HH-mm-ss') + '] ' + err);
+      return;
+    }});
 
 });
 
