@@ -1,6 +1,8 @@
 ﻿from flask import Flask, jsonify, request, abort, json
+import os
 app = Flask(__name__)
 # a fajlba  iras olvasás csak szimuláció
+# a portok letiltogatása a megoldás arra, hogy ha offot nyomunk ne jöjjön kamerakép
 @app.route("/status", methods=['GET'])
 def readstatus():
     return jsonify(getCameraStatus())
@@ -52,6 +54,7 @@ def turnoncamera():
         f = open("camerastatus", "w")
         f.write("1")
         f.close()
+        os.system("sudo ufw allow 8081")
     except Exception as e:
         print("An exception occurred: " + str(e))
 
@@ -60,6 +63,7 @@ def turnoffcamera():
         f = open("camerastatus", "w")
         f.write("0")
         f.close()
+        os.system("sudo ufw deny 8081")
     except Exception as e:
         print("An exception occurred: " + str(e))
 
