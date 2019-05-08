@@ -172,7 +172,7 @@ describe("Test /movements route", () => {
                     chai.expect(res.movements).not.undefined;
                     chai.expect(res.movements.length).to.be.equal(1);
                     var movement = res.movements[0];
-                    chai.expect(movement).to.deep.equal({is_new: "0", timestamp:'2019-03-27_09-56-11', url:'/uploads/test', path:'/justanurl'})
+                    chai.expect(movement).to.deep.equal({is_new: "1", timestamp:'2019-03-27_09-56-11', url:'/uploads/test', path:'/justanurl'})
                     done();
                 });
             });
@@ -312,6 +312,87 @@ describe("Test /newmovements route", () => {
         });
     });
 });
+
+describe("Combined test with  /movements and /newmovements route", () => {
+    it("Get movements, then newmovements, then get movements and check if the movement is not new anymore", (done) => {
+        //insert a movement
+        db.run('INSERT INTO movements(date_time, path, image,is_new) VALUES(?, ?, ?, ?)', ['2019-03-27_09-56-11', '/justanurl', 'test', 1], (err) => {
+            if(err) {
+                throw err;
+            }
+            chai.request(app)
+            .get('/movements')
+            .end((err, res) => {
+                //check status code
+                res.should.have.status(200);
+                //response has the movement inserted before
+                var res = JSON.parse(res.text);
+                chai.expect(res.movements).not.undefined;
+                chai.expect(res.movements.length).to.be.equal(1);
+                var movement = res.movements[0];
+                chai.expect(movement).to.deep.equal({is_new: "1", timestamp:'2019-03-27_09-56-11', url:'/uploads/test', path:'/justanurl'})
+
+		chai.request(app)
+                .get('/newmovements')
+                .end((err, res) => {
+                    //check status code
+                    res.should.have.status(200);
+                    //response has the movement inserted before
+                    var res = JSON.parse(res.text);
+                    chai.expect(res.movements).not.undefined;
+                    chai.expect(res.movements.length).to.be.equal(1);
+		    var movement = res.movements[0];
+                    chai.expect(movement).to.deep.equal({is_new: "1", timestamp:'2019-03-27_09-56-11', url:'/uploads/test', path:'/justanurl'})
+                    done();
+                
+
+		    chai.request(app)
+		    .get('/movements')
+		    .end((err, res) => {
+		        //check status code
+		        res.should.have.status(200);
+		        //response has the movement inserted before
+		        var res = JSON.parse(res.text);
+		        chai.expect(res.movements).not.undefined;
+		        chai.expect(res.movements.length).to.be.equal(1);
+		        var movement = res.movements[0];
+		        chai.expect(movement).to.deep.equal({is_new: "0", timestamp:'2019-03-27_09-56-11', url:'/uploads/test', path:'/justanurl'})
+		        done();
+		    });
+                });
+            });
+        })
+    });
+    
+    beforeEach(function(done){
+        db.run('DELETE FROM movements',[],function(err){
+            done();
+        });
+    });
+
+    afterEach(function(done){
+        //delete from filesystem
+        setTimeout(function(){    
+            db.run('DELETE FROM movements',[],function(err){
+                done();
+            });
+        },1000);
+         
+        
+    });
+
+    before((done)=>{
+        db= new sqlite3.Database('./movements.db',done);
+    });
+
+    after((done)=>{
+        db.close(()=>{
+            done();
+        });
+    });
+});
+
+
 
 describe("Test /stats route ", () => {
 
