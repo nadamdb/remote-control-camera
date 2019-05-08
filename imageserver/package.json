@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "nyc --reporter=html --reporter=text mocha --exit",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
     "start": "node server.js"
   },
   "keywords": [
@@ -26,6 +27,7 @@
     "time-stamp": "^2.2.0"
   },
   "devDependencies": {
-    "nyc": "^14.0.0"
+    "nyc": "^14.0.0",
+    "coveralls": "^3.0.3"
   }
 }

@@ -17,3 +17,4 @@ matrix:
               - npm i
           script:
               - npm test
+              - npm run coverage
