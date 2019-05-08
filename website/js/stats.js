@@ -2,7 +2,7 @@ $(document).ready(function(){
 
 	$.ajax({
 		method: "GET",
-		url: "http://192.168.66.2:3000/movements",
+		url: "/movements",
 		success: function (data) {
 
 			$.each(data.movements, function(i,e){
@@ -10,8 +10,8 @@ $(document).ready(function(){
 					'<tr>' +
 						'<td>' + e.timestamp + '<br/><small>00:00:00</small></td>' +
 						'<td class="text-center">' +
-							'<a href="'+ e.path +'" c lass="image-link">' +
-								'<img src="' + e.path + '" alt="'+i+'" style="width: 100px;">' +
+							'<a href="'+ e.url +'" c lass="image-link">' +
+								'<img src="' + e.url + '" alt="'+i+'" style="width: 100px;">' +
 							'</a>' +
 						'</td>' +
 					'</tr>'

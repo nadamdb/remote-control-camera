@@ -2,7 +2,7 @@ $(document).ready(function(){
 
 	$.ajax({
 		method: "GET",
-		url: "http://192.168.66.2:3000/camera",
+		url: "/camera",
 		success: function (data) {
 			if (data == "ON")
 			{
@@ -25,7 +25,7 @@ $(document).ready(function(){
 
 		$.ajax({
 			method: "POST",
-			url: "http://192.168.66.2:3000/camera",
+			url: "/camera",
 			data: { command : command },
 			success: function (data) {
 				if (command == "on")
@@ -56,7 +56,7 @@ $(document).ready(function(){
 		{
 			$.ajax({
 				method: "GET",
-				url: "http://192.168.66.2:3000/newmovements",
+				url: "/newmovements",
 				success: function (data) {
 					var movements = data.movements;
 					var count = movements.length;
@@ -66,7 +66,7 @@ $(document).ready(function(){
 					$.each(data.movements, function(i,e){
 						$('#notifications-dropdown .drop-content').append(
 							'<li>' +
-								'<div class="col-md-3 col-sm-3 col-xs-3"><div class="notify-img"><img src="'+e.path+'" alt=""></div></div>' +
+								'<div class="col-md-3 col-sm-3 col-xs-3"><div class="notify-img"><img src="'+e.url+'" alt=""></div></div>' +
 								'<div class="col-md-9 col-sm-9 col-xs-9 pd-l0">'+e.timestamp+'<i class="fa fa-dot-circle-o"></i></div>' +
 							'</li>'
 						);
@@ -82,7 +82,7 @@ $(document).ready(function(){
 function updateBadge() {
 	$.ajax({
 		method: "GET",
-		url: "http://192.168.66.2:3000/stats",
+		url: "/stats",
 		success: function (data) {
 			var count = data.movements;
 			$(".noti-badge").html(count);
