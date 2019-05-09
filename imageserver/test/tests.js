@@ -6,6 +6,9 @@ var sqlite3 = require('sqlite3').verbose();
 var db = null;
 const path = require('path');
 var nock = require('nock');
+var python_server_ip = "192.168.1.125";
+var python_server_port = 5000;
+var python_url = "http://"+python_server_ip+":"+python_server_port;
 
 const directory = 'public/uploads';
 
@@ -62,8 +65,20 @@ describe("Test File Upload", () => {
         });
 
         beforeEach(function(done){
-            db.run('DELETE FROM movements',[],function(err){
-                done();
+            fs.readdir(directory, (err, files) => {
+                if (err) throw err;
+              
+                for (const file of files) {
+                  if (file != '.keep'){
+                    fs.unlinkSync(path.join(directory, file));
+                  }
+                  
+                }
+                
+                db.run('DELETE FROM movements',[],function(err){
+                    done();
+                });
+                
             });
         });
 
@@ -444,7 +459,7 @@ describe("Status routes", (done)=>{
     it("Get /camera, server respons with on", function (done) {
 
         // Set up an interceptor
-        nock('http://192.168.66.3:5000')
+        nock(python_url)
             .get('/status')
             .reply(200, { status: 'on' });
 
@@ -462,7 +477,7 @@ describe("Status routes", (done)=>{
     it("Get /camera, server respons with off", function (done) {
 
         // Set up an interceptor
-        nock('http://192.168.66.3:5000')
+        nock(python_url)
             .get('/status')
             .reply(200, { status: 'off' });
 
@@ -480,7 +495,7 @@ describe("Status routes", (done)=>{
     it("Get /camera, server respons with random value", function (done) {
 
         // Set up an interceptor
-        nock('http://192.168.66.3:5000')
+        nock(python_url)
             .get('/status')
             .reply(200, { status: 'asdasd' });
 
@@ -497,7 +512,7 @@ describe("Status routes", (done)=>{
     it("Get /camera, server respons with server error ", function (done) {
 
         // Set up an interceptor
-        nock('http://192.168.66.3:5000')
+        nock(python_url)
             .get('/status')
             .reply(500);
 
@@ -520,7 +535,7 @@ describe("Camera post routes", (done)=>{
     it("Pst /camera on, server respons with on", function (done) {
 
         // Set up an interceptor
-        nock('http://192.168.66.3:5000')
+        nock(python_url)
             .post('/camera')
             .reply(200, { status: 'on' });
 
@@ -538,7 +553,7 @@ describe("Camera post routes", (done)=>{
     it("Post /camera off, server respons with off", function (done) {
 
         // Set up an interceptor
-        nock('http://192.168.66.3:5000')
+        nock(python_url)
             .post('/camera')
             .reply(200, { status: 'off' });
 
@@ -556,7 +571,7 @@ describe("Camera post routes", (done)=>{
     it("Post /camera off, server respons with error", function (done) {
 
         // Set up an interceptor
-        nock('http://192.168.66.3:5000')
+        nock(python_url)
             .post('/camera')
             .reply(500);
 
