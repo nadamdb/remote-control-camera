@@ -2,7 +2,6 @@
 import os
 app = Flask(__name__)
 # a fajlba  iras olvasás csak szimuláció
-# a portok letiltogatása a megoldás arra, hogy ha offot nyomunk ne jöjjön kamerakép
 @app.route("/status", methods=['GET'])
 def readstatus():
     return jsonify(getCameraStatus())
@@ -54,7 +53,7 @@ def turnoncamera():
         f = open("camerastatus", "w")
         f.write("1")
         f.close()
-        os.system("sudo ufw allow 8081")
+        os.system("usr/bin/sudo service motion start")
     except Exception as e:
         print("An exception occurred: " + str(e))
 
@@ -63,7 +62,7 @@ def turnoffcamera():
         f = open("camerastatus", "w")
         f.write("0")
         f.close()
-        os.system("sudo ufw deny 8081")
+        os.system("usr/bin/sudo service motion stop")
     except Exception as e:
         print("An exception occurred: " + str(e))
 
