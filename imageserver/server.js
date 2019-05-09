@@ -12,7 +12,7 @@ const app = express();
 const httpServer = http.createServer(app);
 const PORT = process.env.PORT || 3000;
 var db = new sqlite3.Database('./movements.db');
-var python_server_ip = "192.168.66.3";
+var python_server_ip = "192.168.1.125";
 var python_server_port = 5000;
 axios.defaults.port = python_server_port;
 // Important! Where to move the uploaded file on the server. 
@@ -37,7 +37,9 @@ app.use(express.static('public'));
 app.use(express.static(__dirname + '/../website/'));
 
 // Bodyparser
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
 
 
 // /upload site to post images (ex.: curl -X POST http://csontho.info:3000/upload -F sampleFile=@image.png )
@@ -92,7 +94,7 @@ app.post('/upload', function (req, res) {
 
 app.get("/stats", function (req, res) {
 
-  var sql = "SELECT COUNT(path) as number FROM movements WHERE is_new=1";
+  var sql = "SELECT COUNT(path) as number FROM movements WHERE is_new=1 order by date_time asc";
   db.all(sql, [], (err, rows) => {
     if (err) {
       console.log('[Image Server][' + timestamp.utc('YYYY-MM-DD_HH-mm-ss') + '] ' + err);
@@ -114,7 +116,7 @@ app.get("/stats", function (req, res) {
 });
 
 app.get("/movements", function (req, res) {
-  var sql = "SELECT * FROM movements";
+  var sql = "SELECT * FROM movements order by date_time asc";
 
   db.all(sql, [], (err, rows) => {
     if (err) {
@@ -133,6 +135,7 @@ app.get("/movements", function (req, res) {
     });
     answer = answer.substring(0, answer.length - 1);
     answer = json_front + answer + json_end;
+    console.log(answer);
     res.end(answer);
 
   });
@@ -148,7 +151,7 @@ app.get("/movements", function (req, res) {
 });
 
 app.get("/newmovements", function (req, res) {
-  var sql = "SELECT * FROM movements WHERE is_new = 1";
+  var sql = "SELECT * FROM movements WHERE is_new = 1 order by date_time asc";
 
   db.all(sql, [], (err, rows) => {
     if (err) {

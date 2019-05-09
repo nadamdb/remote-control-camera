@@ -4,13 +4,16 @@ $(document).ready(function(){
 		method: "GET",
 		url: "/movements",
 		success: function (data) {
-
+			console.log(data.movements)
 			$.each(data.movements, function(i,e){
+				var date_time = e.timestamp.split("_");
+				var time = date_time[1].split('-');
+				var time_nice = time.join(':');
 				$('#stat-table tbody').append(
 					'<tr>' +
-						'<td>' + e.timestamp + '<br/><small>00:00:00</small></td>' +
+						'<td>' + date_time[0] + '<br/><small>' + time_nice + '</small></td>' +
 						'<td class="text-center">' +
-							'<a href="'+ e.url +'" c lass="image-link">' +
+							'<a href="'+ e.url +'" class="image-link">' +
 								'<img src="' + e.url + '" alt="'+i+'" style="width: 100px;">' +
 							'</a>' +
 						'</td>' +
@@ -18,7 +21,9 @@ $(document).ready(function(){
 				);
 			});
 
-			$('#stat-table').DataTable();
+			$('#stat-table').DataTable({
+				"order" : [[ 1, "desc" ]]
+			});
 
 			$(function(){
 				$('.image-link').viewbox({

@@ -26,11 +26,12 @@ $(document).ready(function(){
 		$.ajax({
 			method: "POST",
 			url: "/camera",
-			data: { command : command },
+			data: { value : command },
 			success: function (data) {
 				if (command == "on")
 				{
 					$("#camera-on").addClass("active");
+					window.location.reload();
 				}
 				else //if(command == "off")
 				{
@@ -64,11 +65,14 @@ $(document).ready(function(){
 					$(".noti-badge").html(count);
 
 					$.each(data.movements, function(i,e){
+						var data_time = e.timestamp.split('_');
+						var time = data_time[1].split('-');
+						var time_nice = time.join(':');
 						$('#notifications-dropdown .drop-content').append(
-							'<li>' +
+							'<li><a href="/stats.html">' +
 								'<div class="col-md-3 col-sm-3 col-xs-3"><div class="notify-img"><img src="'+e.url+'" alt=""></div></div>' +
-								'<div class="col-md-9 col-sm-9 col-xs-9 pd-l0">'+e.timestamp+'<i class="fa fa-dot-circle-o"></i></div>' +
-							'</li>'
+								'<div class="col-md-9 col-sm-9 col-xs-9 pd-l0">'+data_time[0]+ '<br/>' + '<small>' + time_nice + '</small>'+'<i class="fa fa-dot-circle-o"></i></div>' +
+							'</a></li>'
 						);
 					});
 				}
